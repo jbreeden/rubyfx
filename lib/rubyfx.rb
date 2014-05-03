@@ -1,12 +1,37 @@
+# The MIT License (MIT)
+#
+# Copyright (c) 2014 Jared Breeden
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
 require 'java'
+require 'jruby/core_ext'
+require 'json'
+require_relative 'rubyfx/web_hub'
+require_relative "#{File.dirname __FILE__}/splatfx.jar"
 
 module RubyFx
   def self.launch(&callback)
-    ApplicationAdapter.set_on_start { |stage|
+    ApplicationAdapter.set_on_start do |stage|
       callback[stage]
-    }
-    applicationClass = java.lang.Class.forName('com.github.crossfx.ApplicationAdapter')
-    Application.launch(applicationClass, [].to_java(:string))
+    end
+    Application.launch(com.github.splatfx.ApplicationAdapter.java_class, [].to_java(:string))
   end
 
   class Controller
@@ -27,7 +52,7 @@ module RubyFx
       controller_adapter = to_controller_adapter
       file = JFile.new(path)
       fxml_url = file.toURI.toURL
-      self.fxml_loader = CrossFxmlLoader.new(fxml_url)
+      self.fxml_loader = SplatFxmlLoader.new(fxml_url)
       self.fxml_loader.controller = controller_adapter
       @scene = RubyFx::Scene.new(self.fxml_loader.load)
     end
@@ -64,7 +89,6 @@ module RubyFx
       controller_adapter.add_method 'initialize', self.method(:initialize_callback)
       
       possibly_event_handling_methods.each do |method_name|
-        puts "Adding method '#{method_name}' to controller adapter"
         handler = self.method(method_name)
         if handler.arity == 0
           controller_adapter.add_method method_name do |event|
@@ -84,7 +108,6 @@ module RubyFx
       self.instance_variables.each do |var|
         val = self.instance_variable_get(var)
         if val.kind_of? ::RubyFx::Controller
-          puts "Adding nested controller: #{var}"
           controller_adapter.add_nested_controller(
             var[1, var.length],
             val.send(:to_controller_adapter)
@@ -122,9 +145,9 @@ module RubyFx
   # Imports
   # -------
 
-  ApplicationAdapter = com.github.crossfx.ApplicationAdapter
-  CrossFxmlLoader = com.github.crossfx.CrossFxmlLoader
-  ControllerAdapter = com.github.crossfx.ControllerAdapter
+  ApplicationAdapter = com.github.splatfx.ApplicationAdapter
+  SplatFxmlLoader = com.github.splatfx.SplatFxmlLoader
+  ControllerAdapter = com.github.splatfx.ControllerAdapter
   JFile =  java.io.File
 
   include_package 'javafx.animation'
