@@ -20,11 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-
-# This file provides the "WebClientHub" and "WebServerHub" classes.
-# These classes 
-
-
 module RubyFx
   
   # Called to create a pair of web hubs, allowing simple asynchronous
