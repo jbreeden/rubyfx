@@ -8,6 +8,7 @@ Gem::Specification.new do |gemspec|
   gemspec.files = [
     'lib/rubyfx.rb',
     'lib/splatfx.jar',
-    'lib/rubyfx/web_hub.rb'
+    'lib/rubyfx/web_hub.rb',
+    'lib/rubyfx/controller.rb'
   ]
 end
