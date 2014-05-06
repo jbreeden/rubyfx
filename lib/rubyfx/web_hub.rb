@@ -22,8 +22,8 @@
 
 module RubyFx
   
-  # Called to create a pair of web hubs, allowing simple asynchronous
-  # communication between a JRuby "server" object and the JavaScript in a WebView.
+  # Called to create a pair of web hubs, allowing simple communication
+  # between a JRuby "server" object and the JavaScript in a WebView.
   # The method accepts
   # - server: The Ruby object to which all events from the WebClientHub will be dispatched (as method calls)
   # - web_view: The WebView to inject the WebClientHub into
